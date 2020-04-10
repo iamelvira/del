@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {font-family: sans-serif; font-weight: bold; background-color: #f9f3fb;}
+        fieldset{width: 300px; margin: 0 auto; padding: 20px; text-align: center; font-size: 20px;
+            border-color: #add8ec;border-radius: 5px; color: #8e8392;}
+        .form-control {margin: 10px; border-color: #add8ec;border-radius: 5px;}
+        .btn {font-family: sans-serif; font-weight: bold; font-size: 20px; color: #f9f3fb; border: none;
+             border-radius: 5px; background-color: #6a4577; width: 100px;height: 40px;}
+        h3 {color: #6a4577;}
+    </style>
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <form method="post" action="/" >
+            <fieldset>
+                <legend><h2>Create order</h2></legend>
+                <legend>Insert your name</legend>
+                <input type="text" class="form-control" name="userName" id="userName">       
+                <legend>Insert your adress</legend>
+                <input type="text" class="form-control" name="addressesAdds" id="userAdress"> 
+                <legend>Insert your package</legend>
+                <input type="text" class="form-control" name="parcelContent" id="parcel"> 
+                <br>
+                <button type="submit" id="insert" class="btn">Insert</button>
+            </fieldset>
+        </form>
+        <hr>
+        <button type="button" id="deliver" onclick=render(); class="btn">Deliver</button>
+        <h3>Delivery process</h3>
+        <div class="delivery"></div>
+    </div>
+    <script>
+        const del=document.querySelector('.delivery');
+        function render(){
+            fetch('/del');
+        };
+    </script>
+</body>
+</html>
