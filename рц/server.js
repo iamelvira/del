@@ -75,95 +75,30 @@ app.listen(3000);
 
 
 
-// function droneSelect(db,ad,us,pack,id){
-//     db.all('SELECT name FROM drones WHERE isFree ="true"', [], (err,drones)=>{
-//         if(err){console.log(err.message);}
-//         (drones.length-1)<id?id=0:id;
-//         let drone=drones[id].name;
-//         deliveryEmulate(drone,db,'false');
-//         let start=`${drone} is delivering ${pack} for ${us} to ${ad}`;
-//         console.log(start);
-//         deliveryEmulate(drone,db,'true');
-//     });
-// }
 
 
-
-// function deliveryEmulate(drone,db,bool){
-//     drone.isFree=bool;
-//     db.all('UPDATE drones SET isFree = "'+bool+'" WHERE id = '+drone.id);
-// }
-
-
-
-// function parcelect(){
-//     let db = new sqlite.Database('delivery.db');
-
-//     db.all('SELECT * FROM parcels', [], (err,pack)=>{
-//         if(err){console.log(err.message);};
-//         const len=pack.length;
-//         for(let i=0; i<len; i++){
-//             let parcel=pack[i].content;
-//             db.all('SELECT adds FROM addresses WHERE id = '+pack[i].addressId, [], (err,adds)=>{
-//                     if(err){console.log(err.message);}
-//                     let address=adds[0].adds;
-//                     db.all('SELECT name FROM users WHERE id = '+pack[i].userId, [], (err,users)=>{
-//                         if(err){console.log(err.message);}
-//                         let user=users[0].name;
-//                         droneSelect(db,address,user,parcel,i);
-//                     });
-//                 });
-//         };
-//     });
-//     db.close();
-// }
-// parcelect();
 
 function parcelect(){
     const dbObj={};
+    let arr;
     let db = new sqlite.Database('delivery.db');
 
-    db.all('SELECT * FROM parcels', [], (err,pack)=>{
+    let a=db.all('SELECT * FROM parcels WHERE delivered="false"', [], function e(err,pack){
         if(err){console.log(err.message);};
-        dbObj.parcels=pack;
         db.all('SELECT * FROM addresses', [], (err,adds)=>{
             if(err){console.log(err.message);}
-            dbObj.adds=adds;
             db.all('SELECT * FROM users', [], (err,users)=>{
                 if(err){console.log(err.message);}
-                dbObj.users=users;
                 db.all('SELECT * FROM drones', [], (err,drones)=>{
                     if(err){console.log(err.message);}
                     // oooooooooooooooooo
-                    dbObj.drones=drones;
-                    let i=0;
-                    const len= pack.length;
-
-                    function wDrone (){
-                        
-                        let wd=round(drones,len);
-                        wd.isFree=false;
-                        const wdId=wd.id;
-                        drones.map(function(drone){
-                            drone.id==wdId?drone.isFree=false:drone;
-                        })
-                        del (users, drones, pack, adds, wd, i);
-                        i++;
-                    };
-                    console.log(i,len);
-                    if (i>=len){
-                    clearInterval(emulate);
-                       }
-                    let emulate=function(msec){
-                        setInterval(wDrone,msec);
-                    }
-                    emulate(1000);
-
+                    // console.log(pack, adds, drones, users);
+                    start(drones,pack,adds,users);
+                    
                 });
             });
         });
     });
-
     db.close();
 }
 
@@ -181,14 +116,50 @@ function del (users, drones, pack, adds, wdrone,i){
        }else{}
 }
 
+ function wDrone (){
+                        
+    let wd=round(drones,len);
+    wd.isFree=false;
+    const wdId=wd.id;
+    drones.map(function(drone){
+        drone.id==wdId?drone.isFree=false:drone;
+    })
+    del (users, drones, pack, adds, wd, i);
+    i++;
+};
 
-
-function round(arr,k){
-    for (let i=0;i<k;i++){
-        if(arr[i].isFree){
+function select(arr, key){
+    const len=arr.length;
+    for (let i=0;i<len;i++){
+        let par=key;
+        if(arr[i][par]){
             return arr[i];
         }
     }
+};
 
+function dataMes(drone,parcel,adds,users){
+    const arr=[];
+    arr.push(drone.name);
+    arr.push(parcel.content);
+    arr.push(users.find(user=>user.id==parcel.userId).name);
+    arr.push(adds.find(ad=>ad.id==parcel.addressId).adds);
+    arr.push(adds.find(ad=>ad.id==parcel.addressId).id);
+    return arr;
 }
 
+function start(drones,pack,adds,users){
+    let drone=select(drones,'isFree');
+    let parcel=select(pack,'delivered');
+    let mes=dataMes(drone,parcel,adds,users);
+    let delay=mes[4]*1000;;
+    drone.isFree=false;
+    pack.splice(pack.find((item,i)=>{item==parcel;return i;}),1);
+    console.log(`${mes[0]} start delivering ${mes[1]} to ${mes[2]} for ${mes[3]}`);
+    setTimeout(function(){
+        console.log(`${mes[0]} delivered ${mes[1]} to ${mes[2]} for ${mes[3]}`);
+        setTimeout(function(){
+            drone.isFree=true;
+        },delay)
+    },delay);
+};
