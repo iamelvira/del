@@ -1,7 +1,7 @@
 Before start install node js with npm.
 Clone repo, run next commands:
 
-$cd del/"рц"
+$cd del/рц
 
 $npm i
 
