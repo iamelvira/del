@@ -1,5 +1,7 @@
 Before start install node js with npm.
-Clone repo, run next commands:
+Run next commands:
+
+
 $git clone https://github.com/iamelvira/del.git
 
 $cd del/рц
