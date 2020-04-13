@@ -4,11 +4,11 @@
   "description": "npm",
   "main": "server.js",
   "dependencies": {
-    "alert": "^1.0.0",
-    "alert-node": "^3.0.10",
     "body-parser": "^1.19.0",
     "ejs": "^3.0.2",
     "express": "^4.17.1",
+    "node-static": "^0.7.11",
+    "socket.io": "latest",
     "sqlite3": "^4.1.1"
   },
   "devDependencies": {},
